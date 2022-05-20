@@ -5,15 +5,17 @@ function work (a, b) {
 }
 
 function spy (func) {
-  const cache = [];
-  return function (...args) {
-    cache.push([args[0], args[1]]);
+  function wrap(...args) {
+    wrap.cache.push([args[0], args[1]]);
     console.log('args = ', args);
-    console.log('cache = ', cache);
+    console.log('cache = ', wrap.cache);
     console.log('func = ', func);
-    const result = func(args[0], args[1]);
-    return result;
-  };
+    // const result = func(args[0], args[1]);
+    return func.apply(this, args);
+  }
+  wrap.cache = [];
+
+  return wrap;
 }
 
 work = spy(work);
@@ -23,8 +25,7 @@ work(4, 5); // 9
 
 console.log(work.cache);
 
-/*
-for (let args of work.calls) {
+
+for (let args of work.cache) {
   console.log( 'call:' + args.join() ); // "call:1,2", "call:4,5"
 }
-*/
