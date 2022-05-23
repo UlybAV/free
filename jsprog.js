@@ -33,6 +33,7 @@ for (const args of work.cache) {
 // Декоратор для задержки вызова функции.
 // Decorator for call delay function.
 
+/*
 function f (x) {
   console.log(x);
 }
@@ -46,3 +47,30 @@ const f1500 = delay(f, 1500);
 
 f1000('test 1000 ms'); // показывает "test" после 1000 мс
 f1500('test 1500 ms'); // показывает "test" после 1500 мс
+*/
+
+// Ограничение последующих вызовов по интервалу времени.
+// Limitations next calls by time interval.
+
+function debounce (func, delay) {
+  let prevCallTime;
+  console.log(`First prevCallTime = ${prevCallTime}
+    func = ${func}
+    delay = ${delay}`);
+  return function () {
+    if (!prevCallTime || Date.now() > prevCallTime + delay) {
+      prevCallTime = Date.now();
+      console.log('prevCallTime = ', prevCallTime);
+      func();
+    }
+  };
+}
+
+let f = debounce(() => console.log('alert'), 1000);
+
+f(1); // выполняется немедленно
+f(2); // проигнорирован
+
+setTimeout( () => f(3), 100); // проигнорирован (прошло только 100 мс)
+setTimeout( () => f(4), 1100); // выполняется
+setTimeout( () => f(5), 1500); // проигнорирован (прошло только 400 мс от последнего вызова)
