@@ -70,6 +70,7 @@ function debounce (func, delay) {
 }
 */
 
+/*
 function debounce (func, interval) {
   let isClosed = false;
 
@@ -94,3 +95,39 @@ f(2); // проигнорирован
 setTimeout( () => f(3), 100); // проигнорирован (прошло только 100 мс)
 setTimeout( () => f(4), 1100); // выполняется
 setTimeout( () => f(5), 1500); // проигнорирован (прошло только 400 мс от последнего вызова)
+*/
+
+// Тормозящий декоратор.
+// Throthling decorator.
+
+function f(a) {
+  console.log(a);
+}
+
+function throttle(func, interval) {
+  console.log('interval = ', interval);
+  let isClosedInterval = false;
+  let stackFunc = function () {};
+  return function (num) {
+    console.log('arguments = ', arguments);
+    if (isClosedInterval) {
+      console.log('isClosed = ', isClosedInterval);
+      stackFunc = func(num);
+      return;
+    }
+    isClosedInterval = true;
+    console.log('num = ', num);
+    func(num);
+    setTimeout( () => { isClosedInterval = false; }, interval);
+  };
+}
+
+// f1000 передаёт вызовы f максимум раз в 1000 мс
+let f1000 = throttle(f, 1000);
+
+f1000(1); // показывает 1
+f1000(2); // (ограничение, 1000 мс ещё нет)
+f1000(3); // (ограничение, 1000 мс ещё нет)
+
+// когда 1000 мс истекли ...
+// ...выводим 3, промежуточное значение 2 было проигнорировано
