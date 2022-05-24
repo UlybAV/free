@@ -52,6 +52,9 @@ f1500('test 1500 ms'); // показывает "test" после 1500 мс
 // Ограничение последующих вызовов по интервалу времени.
 // Limitations next calls by time interval.
 
+/* Здесь не нравится, что при каждой попытке вызова проверяется условие
+  Here i do not like, that here every try call, check condition.
+
 function debounce (func, delay) {
   let prevCallTime;
   console.log(`First prevCallTime = ${prevCallTime}
@@ -65,8 +68,25 @@ function debounce (func, delay) {
     }
   };
 }
+*/
 
-let f = debounce(() => console.log('alert'), 1000);
+function debounce (func, interval) {
+  let isClosed = false;
+
+  console.log(`First isClosed = ${isClosed}
+    func = ${func}
+    Base interval = ${interval}`);
+
+  return function () {
+    if (isClosed) return;
+    isClosed = true;
+    console.log(`Base interval = ${interval}`);
+    func();
+    setTimeout( () => { isClosed = false; }, interval);
+  };
+}
+
+const f = debounce( () => console.log('alert'), 1000 );
 
 f(1); // выполняется немедленно
 f(2); // проигнорирован
