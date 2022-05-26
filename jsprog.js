@@ -104,6 +104,7 @@ function f(a) {
   console.log(a);
 }
 
+/* Удалить. Delete this.
 function throttle(func, interval) {
   console.log('interval = ', interval);
   let isClosedInterval = false;
@@ -121,6 +122,38 @@ function throttle(func, interval) {
     setTimeout( () => { isClosedInterval = false; }, interval);
   };
 }
+
+*/
+
+function throttle (func, delay) {
+  let isThrottled;
+  let savedThis;
+  let savedArgs;
+  console.log(`naturalThis = ${this}`);
+  function wrapper() {
+
+    if (isThrottled) { // (2)
+      savedArgs = arguments;
+      savedThis = this;
+      return;
+    }
+
+    func.apply(this, arguments); // (1)
+
+    isThrottled = true;
+
+    setTimeout(function() {
+      isThrottled = false; // (3)
+      if (savedArgs) {
+        wrapper.apply(savedThis, savedArgs);
+        savedArgs = savedThis = null;
+      }
+    }, delay);
+  }
+
+  return wrapper;
+}
+
 
 // f1000 передаёт вызовы f максимум раз в 1000 мс
 let f1000 = throttle(f, 1000);
